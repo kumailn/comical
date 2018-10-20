@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "cloudinary": "^1.11.0",
     "firebase": "^5.5.5",
     "panzoom": "^6.3.1",
     "svg.js": "^2.6.6",
