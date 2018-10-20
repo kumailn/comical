@@ -70,6 +70,7 @@ export default {
                 result => {
                     console.log('Res', result);
                     this.comics.push(result.url);
+                    this.createTextbox(ind);
                 },
                 {
                     public_id: 'sample_remote',
@@ -88,6 +89,15 @@ export default {
                 fill: '#ffffff',
                 x: (ind % 3) * 400 + 5,
                 y: Math.floor(ind / 3) * 400 + 5,
+            });
+        },
+        createTextbox(ind) {
+            this.draw.rect(250, 50).attr({
+                fill: '#ffffff',
+                stroke: '#000000',
+                'stroke-width': 6,
+                x: (ind % 3) * 400 + 150,
+                y: Math.floor(ind / 3) * 400 + 200,
             });
         },
     },
