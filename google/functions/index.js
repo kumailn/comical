@@ -39,29 +39,40 @@ var fallbacks = ['Sorry, I didn\'t quite catch that.', 'Say that again?', 'I don
 app.intent('Default Welcome Intent', conv => {
     conv.data.session = {}
     let session = conv.data.session;
-    conv.ask('Welcome to Once Upon a Time! Please begin telling your story.');
+    conv.ask('Welcome to Comical! Please begin telling your story.');
 });
 
 app.intent('storyInput', (conv, params) => {
     let storyInput = params.storyInput;
-    console.log('storyInput string: ' + storyInput);
+    console.log('storyInput param: ' + storyInput);
+
+    let said = '';
+    let saidIndex = storyInput.indexOf('said');
+
+    if( saidIndex != -1 ) {
+        said = storyInput.substring(saidIndex + 5, storyInput.length);
+        console.log('said substring: ' + said);
+    }
     
     var options = {
         method: 'GET',
         url: 'http://40.117.32.177:8080/api?text='+storyInput
     };
 
-    return axios.get(`http://40.117.32.177:8080/api?text=${storyInput}`).then((response) => {
-        console.log("Got data", response.data);
+    return axios.get('http://40.117.32.177:8080/api?text=${storyInput}').then((response) => {
+        console.log("Got data:", response.data);
+
         return db.collection("users").doc("test2").update({
-            comics: firebase.firestore.FieldValue.arrayUnion({url: response.data[1], storyInput})
+            comics: firebase.firestore.FieldValue.arrayUnion({url: response.data[1], storyInput, said})
         }).then(() => {
-        console.log('big success')
-        var output = prompts[Math.floor(Math.random() * prompts.length)];
-        conv.ask(output);}
-        ).catch(err => {console.log('big error', err)
-        conv.ask('ERROR', err);
-    });
+            console.log('big success')
+            var output = prompts[Math.floor(Math.random() * prompts.length)];
+            conv.ask(output);
+        }).catch(err => {
+            console.log('big error', err)
+            conv.ask('ERROR', err);
+        });
+
     }).catch((err) => {
         console.log('ERROR: ', err);
         conv.ask("Error");
