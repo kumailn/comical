@@ -40,6 +40,7 @@ export default {
             comics: [],
             draw: null,
             faceMap: 'http://40.117.32.177:8080/face?text=',
+            currentImageIndex: 0,
         };
     },
     props: {
@@ -47,6 +48,7 @@ export default {
     },
     methods: {
         xCoord(ind) {
+            this.currentImageIndex = ind;
             console.log('Index is', ind);
             this.createBorder(ind);
             return (ind % 3) * 400 + 10;
@@ -56,10 +58,10 @@ export default {
                 .doc('test2')
                 .onSnapshot(async doc => {
                     //this.comics.push(doc.data().comics.slice(-1)[0]);
-                    let faceMappning = await axios.get(
-                        `${this.faceMap}${doc.data().comics.slice(-1)[0].url}`
-                    );
-                    console.log('Face map result', faceMappning.data);
+                    // let faceMappning = await axios.get(
+                    //     `${this.faceMap}${doc.data().comics.slice(-1)[0].url}`
+                    // );
+                    //console.log('Face map result', faceMappning.data);
                     this.comicify(doc.data().comics.slice(-1)[0].url);
                     console.log('Current data: ', doc.data());
                 });
@@ -70,7 +72,7 @@ export default {
                 result => {
                     console.log('Res', result);
                     this.comics.push(result.url);
-                    this.createTextbox(ind);
+                    this.createTextbox(this.currentImageIndex);
                 },
                 {
                     public_id: 'sample_remote',
