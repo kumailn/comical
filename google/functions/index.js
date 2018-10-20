@@ -1,4 +1,32 @@
-'use strict';
+
+var serviceAccount = require("./key.json");
+//var admin = require("firebase-admin");
+const axios = require("axios");
+const firebase = require("firebase");
+
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+//   databaseURL: "https://storytime-a688b.firebaseio.com"
+// });
+
+// let db = admin.firestore();
+// db.settings({ timestampsInSnapshots: true });
+
+let firestore = require('firebase/firestore');
+
+// Initialize Firebase
+const config = {
+  apiKey: 'AIzaSyChNQbbV5Li5FU2sOjEWTY-hIBoy9R9ZSg',
+  authDomain: 'storytime-a688b.firebaseapp.com',
+  databaseURL: 'https://storytime-a688b.firebaseio.com',
+  projectId: 'storytime-a688b',
+  storageBucket: 'storytime-a688b.appspot.com',
+  messagingSenderId: '669392027502',
+};
+
+const firebaseApp = firebase.initializeApp(config);
+firebaseApp.firestore().settings({ timestampsInSnapshots: true });
+let db = firebaseApp.firestore();
 
 const functions = require('firebase-functions'); 
 const { dialogflow } = require('actions-on-google');
@@ -22,15 +50,22 @@ app.intent('storyInput', (conv, params) => {
         method: 'GET',
         url: 'http://40.117.32.177:8080/api?text='+storyInput
     };
-    
-    request2(options, function (error, response2, body) {
-        console.log('error:', error); // Print the error if one occurred
-        console.log('statusCode:', response2 && response2.statusCode); // Print the response status code if a response was received
-        console.log('body:', body); // Print the HTML for the Google homepage.
+
+    return axios.get(`http://40.117.32.177:8080/api?text=${storyInput}`).then((response) => {
+        console.log("Got data", response.data);
+        return db.collection("users").doc("test2").update({
+            comics: firebase.firestore.FieldValue.arrayUnion({url: response.data[1], storyInput})
+        }).then(() => {
+        console.log('big success')
+        var output = prompts[Math.floor(Math.random() * prompts.length)];
+        conv.ask(output);}
+        ).catch(err => {console.log('big error', err)
+        conv.ask('ERROR', err);
     });
-    
-    var output = prompts[Math.floor(Math.random() * prompts.length)];
-    conv.ask(output);
+    }).catch((err) => {
+        console.log('ERROR: ', err);
+        conv.ask("Error");
+    });
 });
 
 exports.main = functions.https.onRequest(app);

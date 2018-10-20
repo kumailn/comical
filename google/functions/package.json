@@ -1,4 +1,5 @@
-{"name": "functions",
+{
+  "name": "functions",
   "description": "Cloud Functions for Firebase",
   "scripts": {
     "serve": "firebase serve --only functions",
@@ -8,12 +9,15 @@
     "logs": "firebase functions:log"
   },
   "dependencies": {
-    "request": "2.88.0",
     "actions-on-google": "^2.2.0",
+    "axios": "^0.18.0",
+    "dialogflow": "^0.6.0",
+    "dialogflow-fulfillment": "^0.5.0",
+    "firebase": "^5.5.5",
     "firebase-admin": "^5.13.1",
     "firebase-functions": "^2.0.2",
-    "dialogflow": "^0.6.0",
-    "dialogflow-fulfillment": "^0.5.0"
+    "node-fetch": "^2.2.0",
+    "request": "2.88.0"
   },
   "private": true
 }
