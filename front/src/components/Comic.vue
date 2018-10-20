@@ -32,12 +32,14 @@ import SVG from 'svg.js';
 import panzoom from 'panzoom';
 import db from '../init.js';
 import cloudinary from 'cloudinary';
+import axios from 'axios';
 export default {
     name: 'HelloWorld',
     data() {
         return {
             comics: [],
             draw: null,
+            faceMap: 'http://40.117.32.177:8080/face?text=',
         };
     },
     props: {
@@ -52,8 +54,12 @@ export default {
         attachListener() {
             db.collection('users')
                 .doc('test2')
-                .onSnapshot(doc => {
+                .onSnapshot(async doc => {
                     //this.comics.push(doc.data().comics.slice(-1)[0]);
+                    let faceMappning = await axios.get(
+                        `${this.faceMap}${doc.data().comics.slice(-1)[0].url}`
+                    );
+                    console.log('Face map result', faceMappning.data);
                     this.comicify(doc.data().comics.slice(-1)[0].url);
                     console.log('Current data: ', doc.data());
                 });
@@ -76,6 +82,12 @@ export default {
                 fill: '#000000',
                 x: (ind % 3) * 400,
                 y: Math.floor(ind / 3) * 400,
+            });
+
+            this.draw.rect(390, 290).attr({
+                fill: '#ffffff',
+                x: (ind % 3) * 400 + 5,
+                y: Math.floor(ind / 3) * 400 + 5,
             });
         },
     },
