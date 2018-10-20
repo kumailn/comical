@@ -1,7 +1,9 @@
 <template>
     <div class="mainScene">
+
         <svg id="comic-container" class="main">
             <!-- this is the draggable root -->
+
             <g id='scene'>
                 <g id="dynamic"></g>
                 <!-- <svg width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -13,9 +15,11 @@
                 <svg id='lol' width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                     <image xlink:href="https://img.purch.com/o/aHR0cDovL3d3dy5uZXdzYXJhbWEuY29tL2ltYWdlcy9pLzAwMC8xOTcvMDQ0L2kwMi9hY3Rpb25fOTc4X2Zyb250LmpwZw==" x="800" y="0" height="300px" width="400px" />
                 </svg> -->
+
                 <svg v-for="(comic, ind) in comics" :key="ind" width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                    <image :xlink:href="comic" :x="xCoord(ind)" :y="Math.floor(ind / 3) * 400" height="300px" width="400px" />
+                    <image :xlink:href="comic" :x="xCoord(ind)" :y="(Math.floor(ind / 3) * 400) + 10" height="280px" width="380px" />
                 </svg>
+                <text x="70" y="35" class="small">My</text>
             </g>
         </svg>
 
@@ -33,6 +37,7 @@ export default {
     data() {
         return {
             comics: [],
+            draw: null,
         };
     },
     props: {
@@ -41,14 +46,15 @@ export default {
     methods: {
         xCoord(ind) {
             console.log('Index is', ind);
-            return (ind % 3) * 400;
+            this.createBorder(ind);
+            return (ind % 3) * 400 + 10;
         },
         attachListener() {
             db.collection('users')
-                .doc('test')
+                .doc('test2')
                 .onSnapshot(doc => {
                     //this.comics.push(doc.data().comics.slice(-1)[0]);
-                    this.comicify(doc.data().comics.slice(-1)[0]);
+                    this.comicify(doc.data().comics.slice(-1)[0].url);
                     console.log('Current data: ', doc.data());
                 });
         },
@@ -56,7 +62,7 @@ export default {
             cloudinary.uploader.upload(
                 imgUrl,
                 result => {
-                    console.log('Res', result.url);
+                    console.log('Res', result);
                     this.comics.push(result.url);
                 },
                 {
@@ -64,6 +70,13 @@ export default {
                     effect: 'cartoonify:50:bw',
                 }
             );
+        },
+        createBorder(ind) {
+            this.draw.rect(400, 300).attr({
+                fill: '#000000',
+                x: (ind % 3) * 400,
+                y: Math.floor(ind / 3) * 400,
+            });
         },
     },
     mounted() {
@@ -93,8 +106,8 @@ export default {
             true
         );
 
-        var draw = SVG('dynamic').size(2000, 2000);
-        var rect = draw.rect(1200, 1600).attr({ fill: '#F5F5F5' });
+        this.draw = SVG('dynamic').size(2000, 2000);
+        this.draw.rect(1200, 1600).attr({ fill: '#F5F5F5' });
 
         var event = new MouseEvent('dblclick', {
             view: window,
@@ -139,5 +152,81 @@ a:focus {
     outline: 0;
     border: none;
     -moz-outline-style: none;
+}
+
+@font-face {
+    font-family: 'SequentialistBB';
+    src: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/306FA6_1_0.woff2') format('woff2'),
+        url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/306FA6_0_0.woff') format('woff');
+    font-style: normal;
+    font-weight: 400;
+}
+@font-face {
+    font-family: 'SequentialistBB';
+    src: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/306FA6_0_0.woff2') format('woff2'),
+        url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/306FA6_0_0.woff') format('woff');
+    font-style: italic;
+    font-weight: 400;
+}
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: SequentialistBB, cursive;
+    font-size: 2.5vw;
+    margin: 0;
+}
+
+/* section {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+} */
+
+/* section {
+    padding: 3rem;
+} */
+
+blockquote.bubble {
+    background-position: center;
+    background-repeat: no-repeat !important;
+    background-size: 50px 50px;
+    margin: 0 auto;
+    text-align: center;
+    height: 0;
+    box-sizing: content-box;
+    line-height: 1;
+}
+
+blockquote.speech {
+    background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/speech-bubble.svg);
+    width: 10%;
+    padding-top: 6%;
+    padding-bottom: 20%;
+}
+
+blockquote.whisper {
+    background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/whisper.svg);
+    width: 25%;
+    font-size: 2vw;
+    color: #ccc;
+    font-style: italic;
+    padding: 6% 5% 15%;
+}
+
+blockquote.electric {
+    background: url(https://s3-us-west-2.amazonaws.com/s.cdpn.io/4273/electric.svg);
+    width: 25%;
+    font-size: 2.4vw;
+    font-style: italic;
+    padding: 4% 6% 12% 0%;
+}
+
+blockquote.electric span {
+    display: block;
+    font-size: 3vw;
+    font-weight: bold;
 }
 </style>
