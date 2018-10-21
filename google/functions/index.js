@@ -59,7 +59,7 @@ app.intent('storyInput', (conv, params) => {
         url: 'http://40.117.32.177:8080/api?text='+storyInput
     };
 
-    return axios.get('http://40.117.32.177:8080/api?text=${storyInput}').then((response) => {
+    return axios.get(`http://40.117.32.177:8080/api?text=${storyInput}`).then((response) => {
         console.log("Got data:", response.data);
 
         return db.collection("users").doc("test2").update({
