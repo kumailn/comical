@@ -728,6 +728,7 @@ ERERERERERERERERERERERERERERERERERERERERERERp/8fmBLrzKPVw84AAAAldEVYdGRhdGU6
 Y3JlYXRlADIwMTgtMTAtMjBUMTk6NTE6NDQtMDc6MDDN5Q/hAAAAJXRFWHRkYXRlOm1vZGlmeQAy
 MDE4LTEwLTIwVDE5OjUxOjQ0LTA3OjAwvLi3XQAAAABJRU5ErkJggg==" />
                     </svg>
+                    <text v-if="comic.top != -1" :x="imageSpeechBubbleX(comic, ind) + 100 + (newImageWidth(comic) - 380)/2" :y="imageSpeechBubbleY(ind, comic)" class="small">ndeownfioenfieonfoie</text>
                 </svg>
                 <!-- <svg width="400" height="110">
                     <rect width="300" height="100" style="fill:rgb(0,0,255); stroke-width:3; stroke:rgb(0,0,0)" />
