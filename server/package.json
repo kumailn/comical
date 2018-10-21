@@ -1,0 +1,33 @@
+{
+  "name": "hackharvard2018azure",
+  "version": "1.0.0",
+  "engines": {
+    "node": "6.9.0"
+  },
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shangxz/hackharvard2018Azure.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Shangxz/hackharvard2018Azure/issues"
+  },
+  "homepage": "https://github.com/Shangxz/hackharvard2018Azure#readme",
+  "dependencies": {
+    "azure-storage": "^2.10.2",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "formidable": "^1.2.1",
+    "multer": "^1.4.1",
+    "multer-azure-storage": "^0.2.0",
+    "multiparty": "^4.2.1",
+    "request": "^2.88.0"
+  }
+}
