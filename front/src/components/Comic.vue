@@ -1,22 +1,19 @@
 <template>
-    <div class="mainScene">
+    <div>
+        <!-- <button @click="saveAsPNG">Download</button> -->
         <svg id="comic-container" class="main">
             <!-- this is the draggable root -->
-
             <g id='scene'>
-                <!-- <svg width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                    <image xlink:href="../assets/logo2.png" x="100" y="-1100" height="100%" width="100%" style="z-index: -1; position: absloute;" />
-                </svg> 
-                xCoord(ind) + ((originalImageSizes[ind].width/380) * faces[ind].b)
-                
-                -->
                 <g id="dynamic"></g>
                 <svg v-for="(comic, ind) in comics" :key="ind" width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                    <image :xlink:href="comic" :x="xCoord(ind)" :y="(Math.floor(ind / 3) * 400) + 10" height="280px" width="380px" style="z-index: -1; position: absloute;" />
-                    <text :x="xCoord(ind)" :y="(Math.floor(ind / 3) * 400) + 330" class="small">{{ stories[ind].replace(/^(.{50}[^\s]*).*/, "$1") }}</text>
-                    <text :x="xCoord(ind)" :y="(Math.floor(ind / 3) * 400) + 355" class="small">{{ stories[ind].replace(stories[ind].replace(/^(.{50}[^\s]*).*/, "$1"), "") }}</text>
+                    <transition name="slide-fade">
+                        <p v-if="show">hello</p>
+                    </transition>
+                    <image :xlink:href="comic.newUrl" :x="xCoord(ind)" :y="(Math.floor(ind / 3) * 400) + 10" height="280px" width="380px" />
+                    <text :x="(ind % 3) * 400 + 10" :y="(Math.floor(ind / 3) * 400) + 330" class="small">{{ comic.storyInput.replace(/^\w/, c => c.toUpperCase()).replace(/^(.{25}[^\s]*).*/, "$1") }}</text>
+                    <text :x="(ind % 3) * 400 + 10" :y="(Math.floor(ind / 3) * 400) + 355" class="small">{{ comic.storyInput.replace(/^\w/, c => c.toUpperCase()).replace(comic.storyInput.replace(/^\w/, c => c.toUpperCase()).replace(/^(.{25}[^\s]*).*/, "$1"), "") }}</text>
                     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="958px" height="958px" viewBox="0 0 958 958" enable-background="new 0 0 958 958" xml:space="preserve">
-                        <image v-if="faces[ind]" id="image0" width="150" height="150" :x="imageSpeechBubbleX() + (((380 / originalImageSizes[currentImageIndex].width) * originalImageSizes[currentImageIndex].width) / 2)" :y="imageSpeechBubbleY(ind) - 100" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA74AAAO+CAQAAACJdwGKAAAABGdBTUEAALGPC/xhBQAAAAJiS0dE
+                        <image v-if="comic.top != -1" id="image0" width="150" height="150" :x="imageSpeechBubbleX(comic, ind) + 100 + (newImageWidth(comic) - 380)/2" :y="imageSpeechBubbleY(ind, comic) - 50" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA74AAAO+CAQAAACJdwGKAAAABGdBTUEAALGPC/xhBQAAAAJiS0dE
 AP+Hj8y/AAAACXBIWXMAAABIAAAASABGyWs+AACAAElEQVR42u3ddZxb553+/Y/GnjEzs2M7tmOI
 w8zYpA20TZomhS3Tb0vbbvfZdrvdwrbbNoU0SZuUm0IaZo6ZYrZjiJmZ2R7PSHr+GM1IB3Uf6UhH
 cL3zij0zvo/m6NjxlZu+N4iIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiI
@@ -539,20 +536,11 @@ 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
-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
+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
@@ -704,41 +692,15 @@ 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
-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" />
+WZIqOOn3PwpSkhS+IlK9ct0JnPmxcyfwVObSQG86FvjuuzGEuRzO6Ml6/W8CYCu4oVCOmMJXRKpbPjuBnaugm3YCb2M6szhGbzoXdI51AF2ZQ73tbr0+khKi8BURyR7AXv3fdATbdwLvYjbT2E9PuhRwI9II4iwkYbkn+z02f6y+bwlR+IqIgHcAZ98JnLn22b4TeB5T2Em3gu0ErmEMO1npuKPMu1XMliCFr4hIs6QlgoMGcGb0pkPvEIuYVMCdwHWM5R02u74b+8eZfV+JlMJXRMTKP4Cd87/2q50bkY6ylImsoQO9C7ATuBOnM4/9HoUlvfq+GniOlMJXRMTJHsDWjUiZX/feiJT5M5zkHSaxlDr6hL4TuDf9mM1x3JaC+R87KBFR+IqIuPPeiGSPNL+dwJnroE+xjsksLMBO4KE0Mrdl4VXzd2++t3QUW2tdqe8bGYWviIi3XDYiudWFTgdwI5uYyhxO0ZsOofVCY4xgKRuJWfq+Sd+BZ4mQwldExJ9pADuLbzjPRmpaBx1nO9OZxdEQdwK3o45JxG1Dzhp4LlEKXxGR7Pw3IjmXX1nPAXYrxpFgN7OZxj560jWUjUhdmMhe23e1/huzDTxLZBS+IiJmrCfjmgdw08f2YhxNH+9nHpPZQTd65B3AbZnLqtS8tNewszV4FcSRUfiKiATlF8DWAehspwIDHGYhk9hIZ3rSOo+7qmEBC23h67XdSLEbMYWviEgu3DcipfkddmCN4BgxjrGUSayifV47gWcxLxWr2cJXS7AipvAVEcmF/4lI6a96x5x9I9JJVjKRpdTmvBP4Jd72CV+33q56wBFR+IqI5CrfncBNv5IOyhj1rGMyC0jSh/YB7+YYf2FLy3dLunx/9164REDhKyKSj9x2AttrUVl3Am9mCm9RTx86BtgWtJI/cAK38LcOgVt7uwrfSCh8RUTyFXwnsNue4Mx9uE07gWdwhF6GO4GT/JmpeEev15pnhW8kFL4iImHIdSew9TXSMRwjyW5mMZW99KRb1o1IC/kpR8ic7bX/6H0YhBSdwldEJCzZdwJ7H0no9Wr7mctEttGdHj5/Y2/h26zIKC5pLehh/14K38gpfEVEwpftTGD3+E1a/km/0mEW8gbr6URv153Aq/g2Myx1ne3Bq+gtMQpfEZHCMNsJ7BeLmSF8jKW8wQo60iNjI1KSvTzD91iQ0d6tpKWUGJXXFhEplFjG37Exmv/GjbX8a/0x/bP7xwAJOjOeixlFdxLsYRkzWckpaixlO5z/JKDlX2u/OGH0TiRkCl8RkUIyC2AcoYsjepv/TRCjjlrgFKeIUUPmVqWkzz+Z4dscugrfSGjYWUSksEw2IqU/cp6LlP65uVIVxGmggQQ1qZlet/h1O+jQ+/tIUSl8RUQKL/tGJOcyLGdIuods0jV+na2Dr7eWglH4iogUh/9GJGsr+4/2kE46rnKPX7+jFSRCCl8RkWLzDmDvulT+PV9ni8y5XXs0q+cbOS24EhEptvTCK+tnbsuw7F+x
+X23l1/91lt7QNqTIqOcrIhIF+8Ir5zIs/3+dwWlfZOUXuhIx9XxFRKLjvhEp/fWYo0+c2f91cg5WO/f0pmNb24wio56viEiU/NZBW6tiea1otr5W5nyudXDZHr3q/0ZIPV8RkejFLH8bxzJ6wM6ZXr+e
+bxPrtiW3CLZ+JEWnnq+ISClwbkRyP5Ih/XHS43XsO4Pde7vq90ZK4SsiUlrcq2Flxma24Ex6tNeZviVDw84iIqXFvpXIa2NS5lfS3IpvOD/WkHPEFL4iIqUo5hKx1gjONu+bNPxMIqDwFREpVe69XL9+L7idCmw2WyxFpDlfEZFS5z6wbNJ5ctuOpOgtAer5ioiUPveSkjGXj5q4V7JS8JYMha+ISLnwq+qc
+naK3hCh8RUTKSy4RrOAtMQpfEZHyZBbCOsm3JCl8RUTKm/ff4wpdERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERp/8fmBLrzKPVw84AAAAldEVYdGRhdGU6Y3JlYXRlADIwMTgtMTAtMjBUMTk6NTE6NDQtMDc6MDDN5Q/hAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE4LTEwLTIwVDE5OjUxOjQ0LTA3OjAwvLi3XQAAAABJRU5ErkJggg==" />
                     </svg>
+                    <text v-if="comic.top != -1 && comic.said.length < 15" :x="imageSpeechBubbleX(comic, ind) + 110 + (newImageWidth(comic) - 380)/2" :y="imageSpeechBubbleY(ind, comic)" class="smaller">{{ comic.said }}</text>
+                    <text v-if="comic.top != -1 && comic.said.length > 15 && comic.said.length < 45" :x="imageSpeechBubbleX(comic, ind) + 110 + (newImageWidth(comic) - 380)/2" :y="imageSpeechBubbleY(ind, comic)" class="smaller">{{ comic.said.replace(/^(.{15}[^\s]*).*/, "$1") }}</text>
+                    <text v-if="comic.top != -1 && comic.said.length > 20 && comic.said.length < 45" :x="imageSpeechBubbleX(comic, ind) + 110 + (newImageWidth(comic) - 380)/2" :y="imageSpeechBubbleY(ind, comic) + 20" class="smaller">{{ comic.said.replace(comic.said.replace(/^(.{15}[^\s]*).*/, "$1"), "") }}</text>
                 </svg>
-                <!-- <svg width="400" height="110">
-                    <rect width="300" height="100" style="fill:rgb(0,0,255); stroke-width:3; stroke:rgb(0,0,0)" />
-                </svg> -->
             </g>
         </svg>
     </div>
@@ -750,21 +712,14 @@ import SVG from 'svg.js';
 import panzoom from 'panzoom';
 import db from '../init.js';
 import cloudinary from 'cloudinary';
+import saveSvgAsPng from 'save-svg-as-png';
 import axios from 'axios';
 export default {
     name: 'HelloWorld',
     data() {
         return {
-            showBox: false,
-            currentStory: '',
-            stories: [],
             comics: [],
-            faces: [],
             draw: null,
-            faceMap: 'http://40.117.32.177:8080/face?text=',
-            currentImageIndex: 0,
-            originalImageSizes: [],
-            currentImageSize: {},
         };
     },
     props: {
@@ -772,12 +727,12 @@ export default {
     },
     methods: {
         xCoord(ind) {
-            this.currentImageIndex = ind;
+            // if (this.$store.state.currentImageIndex != ind)
+            //     this.$store.state.currentImageIndex = ind;
             console.log('Index is', ind);
-            this.createBorder(ind);
-            this.createTextbox(ind);
-
-            if (this.currentImageIndex == 3) this.scrollToSmoothly(260, 0);
+            //this.createBorder(ind);
+            //this.createTextbox(ind);
+            // if (this.$store.state.currentImageIndex == 3) this.scrollToSmoothly(260, 0);
             return (ind % 3) * 400 + 10;
         },
         attachListener() {
@@ -789,10 +744,13 @@ export default {
                     //     `${this.faceMap}${doc.data().comics.slice(-1)[0].url}`
                     // );
                     //console.log('Face map result', faceMappning.data);
-                    this.comicify(doc.data().comics.slice(-1)[0].url);
-                    this.currentStory = doc.data().comics.slice(-1)[0].storyInput;
+                    this.comicify(
+                        doc.data().comics.slice(-1)[0].url,
+                        doc.data().comics.slice(-1)[0]
+                    );
+                    /*                     this.$store.state.currentStory = doc.data().comics.slice(-1)[0].storyInput;
                     console.log('faceeee', doc.data().comics.slice(-1)[0]);
-                    this.currentFace =
+                    this.$store.state.currentFace =
                         doc.data().comics.slice(-1)[0].top != -1
                             ? {
                                   t: doc.data().comics.slice(-1)[0].top,
@@ -800,25 +758,36 @@ export default {
                                   l: doc.data().comics.slice(-1)[0].left,
                                   r: doc.data().comics.slice(-1)[0].right,
                               }
-                            : null;
+                            : null; */
                     console.log('Current data: ', doc.data());
                 });
         },
-        comicify(imgUrl) {
+        comicify(imgUrl, params) {
             cloudinary.uploader.upload(
                 imgUrl,
                 result => {
                     console.log('Res', result);
-                    this.comics.push(result.url);
-                    this.stories.push(this.currentStory);
-                    this.faces.push(this.currentFace);
-                    this.originalImageSizes.push({ height: result.height, width: result.width });
+                    this.comics.push({
+                        newUrl: result.url,
+                        ...params,
+                        originalWidth: result.width,
+                        originalHeight: result.height,
+                    });
+                    /*                     this.$store.state.stories.push(this.currentStory);
+                    this.$store.state.faces.push(this.currentFace);
+                    this.$store.state.originalImageSizes.push({
+                        height: result.height,
+                        width: result.width,
+                    }); */
                 },
                 {
                     public_id: 'sample_remote',
                     effect: 'cartoonify:50:80',
                 }
             );
+        },
+        newImageWidth(comic) {
+            return 280 / (comic.originalHeight / comic.originalWidth);
         },
         createBorder(ind) {
             this.draw.rect(400, 300).attr({
@@ -834,7 +803,7 @@ export default {
             });
         },
         createTextbox(ind) {
-            this.rrr = this.draw
+            this.draw
                 .rect(250, 75)
                 .attr({
                     fill: '#ffffff',
@@ -846,21 +815,15 @@ export default {
                 })
                 .front();
         },
-        imageSpeechBubbleX() {
-            console.log('Bubble', 380 / this.originalImageSizes[this.currentImageIndex].width),
-                this.faces[this.currentImageIndex].b;
-
-            return (
-                this.xCoord(this.currentImageIndex) -
-                (380 / this.originalImageSizes[this.currentImageIndex].width) *
-                    this.faces[this.currentImageIndex].l
-            );
+        imageSpeechBubbleX(comic, ind) {
+            console.log('X index is', ind);
+            return (ind % 3) * 400 + 10 - (380 / comic.originalWidth) * comic.left;
         },
-        imageSpeechBubbleY(ind) {
-            return (
-                Math.floor(ind / 3) * 400 +
-                (280 / this.originalImageSizes[ind].width) * this.faces[ind].t
-            );
+        imageSpeechBubbleY(ind, comic) {
+            return Math.floor(ind / 3) * 400 + (280 / comic.originalWidth) * comic.top;
+        },
+        saveAsPNG() {
+            saveSvgAsPng.saveSvgAsPng(document.getElementById('comic-container'), 'comic.png');
         },
         scrollToSmoothly(pos, time) {
             /*Time is only applicable for scrolling upwards*/
@@ -901,7 +864,10 @@ export default {
             .set({ fakedata: 'test' })
             .then(() => console.log('Done'));
 
-        panzoom(document.getElementById('scene')).zoomAbs(
+        panzoom(document.getElementById('scene'), {
+            maxZoom: 1.2,
+            minZoom: 0.5,
+        }).zoomAbs(
             screen.width / 2 + 400, // initial x position
             screen.height / 2 - 500, // initial y position
             0.5 // initial zoom
@@ -909,7 +875,7 @@ export default {
         document.body.addEventListener(
             'panstart',
             function(e) {
-                console.log('pan start', e);
+                // console.log('pan start', e);
             },
             true
         );
@@ -923,7 +889,7 @@ export default {
         );
 
         this.draw = SVG('dynamic').size(3000, 3000);
-        this.draw.rect(1200, 1600).attr({ fill: '#F5F5F5' });
+        this.draw.rect(1200, 1150).attr({ fill: '#A9A9A9' });
 
         var event = new MouseEvent('dblclick', {
             view: window,
@@ -939,12 +905,26 @@ export default {
         //document.getElementById('lol').dispatchEvent(event);
 
         this.attachListener();
+
+        for (let i = 0; i < 9; i++) {
+            this.createTextbox(i);
+            this.createBorder(i);
+        }
     },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.small {
+    font-family: 'Comic Sans MS';
+    font-size: 24px;
+}
+
+.smaller {
+    font-family: 'Comic Sans MS';
+    font-size: 16px;
+}
 h3 {
     margin: 40px 0 0;
 }
@@ -963,11 +943,26 @@ li {
     height: 3000px;
     outline: none;
 }
-
+#bg {
+    width: 100%;
+    height: 100%;
+}
 a:active,
 a:focus {
     outline: 0;
     border: none;
     -moz-outline-style: none;
+}
+
+.slide-fade-enter-active {
+    transition: all 0.3s ease;
+}
+.slide-fade-leave-active {
+    transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+    transform: translateX(10px);
+    opacity: 0;
 }
 </style>
