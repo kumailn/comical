@@ -1,5 +1,5 @@
 <template>
-    <div class="mainScene">
+    <div>
         <svg id="comic-container" class="main">
             <!-- this is the draggable root -->
 
@@ -13,8 +13,8 @@
                 <g id="dynamic"></g>
                 <svg v-for="(comic, ind) in comics" :key="ind" width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                     <image :xlink:href="comic" :x="xCoord(ind)" :y="(Math.floor(ind / 3) * 400) + 10" height="280px" width="380px" style="z-index: -1; position: absloute;" />
-                    <text :x="xCoord(ind)" :y="(Math.floor(ind / 3) * 400) + 330" class="small">{{ stories[ind].replace(/^(.{50}[^\s]*).*/, "$1") }}</text>
-                    <text :x="xCoord(ind)" :y="(Math.floor(ind / 3) * 400) + 355" class="small">{{ stories[ind].replace(stories[ind].replace(/^(.{50}[^\s]*).*/, "$1"), "") }}</text>
+                    <text :x="xCoord(ind)" :y="(Math.floor(ind / 3) * 400) + 330" class="small">{{ stories[ind].replace(/^(.{25}[^\s]*).*/, "$1") }}</text>
+                    <text :x="xCoord(ind)" :y="(Math.floor(ind / 3) * 400) + 355" class="small">{{ stories[ind].replace(stories[ind].replace(/^(.{25}[^\s]*).*/, "$1"), "") }}</text>
                     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="958px" height="958px" viewBox="0 0 958 958" enable-background="new 0 0 958 958" xml:space="preserve">
                         <image v-if="faces[ind]" id="image0" width="150" height="150" :x="imageSpeechBubbleX() + (((380 / originalImageSizes[currentImageIndex].width) * originalImageSizes[currentImageIndex].width) / 2)" :y="imageSpeechBubbleY(ind) - 100" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA74AAAO+CAQAAACJdwGKAAAABGdBTUEAALGPC/xhBQAAAAJiS0dE
 AP+Hj8y/AAAACXBIWXMAAABIAAAASABGyWs+AACAAElEQVR42u3ddZxb553+/Y/GnjEzs2M7tmOI
@@ -735,6 +735,8 @@ ERERERERERERERERERERERERERERERERERERERERERERp/8fmBLrzKPVw84AAAAldEVYdGRhdGU6
 Y3JlYXRlADIwMTgtMTAtMjBUMTk6NTE6NDQtMDc6MDDN5Q/hAAAAJXRFWHRkYXRlOm1vZGlmeQAy
 MDE4LTEwLTIwVDE5OjUxOjQ0LTA3OjAwvLi3XQAAAABJRU5ErkJggg==" />
                     </svg>
+                <!-- <text v-if="faces[ind]" :x="xCoord(ind)" :y="(Math.floor(ind / 3) * 400) + 330" class="small2">{{ saidArray[ind].replace(/^(.{27}[^\s]*).*/, "$1") }}</text> -->
+
                 </svg>
                 <!-- <svg width="400" height="110">
                     <rect width="300" height="100" style="fill:rgb(0,0,255); stroke-width:3; stroke:rgb(0,0,0)" />
@@ -757,9 +759,11 @@ export default {
         return {
             showBox: false,
             currentStory: '',
+            currentSaid: null,
             stories: [],
             comics: [],
             faces: [],
+            saidArray: [],
             draw: null,
             faceMap: 'http://40.117.32.177:8080/face?text=',
             currentImageIndex: 0,
@@ -774,8 +778,7 @@ export default {
         xCoord(ind) {
             this.currentImageIndex = ind;
             console.log('Index is', ind);
-            this.createBorder(ind);
-            this.createTextbox(ind);
+            
 
             if (this.currentImageIndex == 3) this.scrollToSmoothly(260, 0);
             return (ind % 3) * 400 + 10;
@@ -791,6 +794,7 @@ export default {
                     //console.log('Face map result', faceMappning.data);
                     this.comicify(doc.data().comics.slice(-1)[0].url);
                     this.currentStory = doc.data().comics.slice(-1)[0].storyInput;
+                    this.currentSaid = doc.doc.data().comics.slice(-1)[0].said != '' ? doc.doc.data().comics.slice(-1)[0].said: null;
                     console.log('faceeee', doc.data().comics.slice(-1)[0]);
                     this.currentFace =
                         doc.data().comics.slice(-1)[0].top != -1
@@ -813,6 +817,7 @@ export default {
                     this.stories.push(this.currentStory);
                     this.faces.push(this.currentFace);
                     this.originalImageSizes.push({ height: result.height, width: result.width });
+                    this.saidArray.push(this.currentSaid);
                 },
                 {
                     public_id: 'sample_remote',
@@ -939,12 +944,20 @@ export default {
         //document.getElementById('lol').dispatchEvent(event);
 
         this.attachListener();
+        for(var x = 0;x<9;x++){
+            this.createBorder(x);
+            this.createTextbox(x);
+        }
     },
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.small{
+    font-family: "Comic Sans MS";
+    font-size: 24px;
+}
 h3 {
     margin: 40px 0 0;
 }
@@ -963,7 +976,11 @@ li {
     height: 3000px;
     outline: none;
 }
+#bg{
+    width: 100%;
+    height: 100%;
 
+}
 a:active,
 a:focus {
     outline: 0;
