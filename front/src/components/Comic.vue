@@ -2,21 +2,14 @@
     <div>
         <svg id="comic-container" class="main">
             <!-- this is the draggable root -->
-
             <g id='scene'>
-                <!-- <svg width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                    <image xlink:href="../assets/logo2.png" x="100" y="-1100" height="100%" width="100%" style="z-index: -1; position: absloute;" />
-                </svg> 
-                xCoord(ind) + ((originalImageSizes[ind].width/380) * faces[ind].b)
-                
-                -->
                 <g id="dynamic"></g>
                 <svg v-for="(comic, ind) in comics" :key="ind" width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                    <image :xlink:href="comic" :x="xCoord(ind)" :y="(Math.floor(ind / 3) * 400) + 10" height="280px" width="380px" style="z-index: -1; position: absloute;" />
-                    <text :x="xCoord(ind)" :y="(Math.floor(ind / 3) * 400) + 330" class="small">{{ stories[ind].replace(/^(.{25}[^\s]*).*/, "$1") }}</text>
-                    <text :x="xCoord(ind)" :y="(Math.floor(ind / 3) * 400) + 355" class="small">{{ stories[ind].replace(stories[ind].replace(/^(.{25}[^\s]*).*/, "$1"), "") }}</text>
+                    <image :xlink:href="comic.newUrl" :x="xCoord(ind)" :y="(Math.floor(ind / 3) * 400) + 10" height="280px" width="380px" />
+                    <text :x="(ind % 3) * 400 + 10" :y="(Math.floor(ind / 3) * 400) + 330" class="small">{{ comic.storyInput.replace(/^(.{50}[^\s]*).*/, "$1") }}</text>
+                    <text :x="(ind % 3) * 400 + 10" :y="(Math.floor(ind / 3) * 400) + 355" class="small">{{ comic.storyInput.replace(comic.storyInput.replace(/^(.{50}[^\s]*).*/, "$1"), "") }}</text>
                     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="958px" height="958px" viewBox="0 0 958 958" enable-background="new 0 0 958 958" xml:space="preserve">
-                        <image v-if="faces[ind]" id="image0" width="150" height="150" :x="imageSpeechBubbleX() + (((380 / originalImageSizes[currentImageIndex].width) * originalImageSizes[currentImageIndex].width) / 2)" :y="imageSpeechBubbleY(ind) - 100" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA74AAAO+CAQAAACJdwGKAAAABGdBTUEAALGPC/xhBQAAAAJiS0dE
+                        <image v-if="comic.top != -1" id="image0" width="150" height="150" :x="imageSpeechBubbleX(comic, ind) + 100 + (newImageWidth(comic) - 380)/2" :y="imageSpeechBubbleY(ind, comic) - 50" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA74AAAO+CAQAAACJdwGKAAAABGdBTUEAALGPC/xhBQAAAAJiS0dE
 AP+Hj8y/AAAACXBIWXMAAABIAAAASABGyWs+AACAAElEQVR42u3ddZxb553+/Y/GnjEzs2M7tmOI
 w8zYpA20TZomhS3Tb0vbbvfZdrvdwrbbNoU0SZuUm0IaZo6ZYrZjiJmZ2R7PSHr+GM1IB3Uf6UhH
 cL3zij0zvo/m6NjxlZu+N4iIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiI
@@ -757,18 +750,8 @@ export default {
     name: 'HelloWorld',
     data() {
         return {
-            showBox: false,
-            currentStory: '',
-            currentSaid: null,
-            stories: [],
             comics: [],
-            faces: [],
-            saidArray: [],
             draw: null,
-            faceMap: 'http://40.117.32.177:8080/face?text=',
-            currentImageIndex: 0,
-            originalImageSizes: [],
-            currentImageSize: {},
         };
     },
     props: {
@@ -776,11 +759,12 @@ export default {
     },
     methods: {
         xCoord(ind) {
-            this.currentImageIndex = ind;
+            // if (this.$store.state.currentImageIndex != ind)
+            //     this.$store.state.currentImageIndex = ind;
             console.log('Index is', ind);
-            
-
-            if (this.currentImageIndex == 3) this.scrollToSmoothly(260, 0);
+            //this.createBorder(ind);
+            //this.createTextbox(ind);
+            // if (this.$store.state.currentImageIndex == 3) this.scrollToSmoothly(260, 0);
             return (ind % 3) * 400 + 10;
         },
         attachListener() {
@@ -792,11 +776,13 @@ export default {
                     //     `${this.faceMap}${doc.data().comics.slice(-1)[0].url}`
                     // );
                     //console.log('Face map result', faceMappning.data);
-                    this.comicify(doc.data().comics.slice(-1)[0].url);
-                    this.currentStory = doc.data().comics.slice(-1)[0].storyInput;
-                    this.currentSaid = doc.doc.data().comics.slice(-1)[0].said != '' ? doc.doc.data().comics.slice(-1)[0].said: null;
+                    this.comicify(
+                        doc.data().comics.slice(-1)[0].url,
+                        doc.data().comics.slice(-1)[0]
+                    );
+                    /*                     this.$store.state.currentStory = doc.data().comics.slice(-1)[0].storyInput;
                     console.log('faceeee', doc.data().comics.slice(-1)[0]);
-                    this.currentFace =
+                    this.$store.state.currentFace =
                         doc.data().comics.slice(-1)[0].top != -1
                             ? {
                                   t: doc.data().comics.slice(-1)[0].top,
@@ -804,26 +790,36 @@ export default {
                                   l: doc.data().comics.slice(-1)[0].left,
                                   r: doc.data().comics.slice(-1)[0].right,
                               }
-                            : null;
+                            : null; */
                     console.log('Current data: ', doc.data());
                 });
         },
-        comicify(imgUrl) {
+        comicify(imgUrl, params) {
             cloudinary.uploader.upload(
                 imgUrl,
                 result => {
                     console.log('Res', result);
-                    this.comics.push(result.url);
-                    this.stories.push(this.currentStory);
-                    this.faces.push(this.currentFace);
-                    this.originalImageSizes.push({ height: result.height, width: result.width });
-                    this.saidArray.push(this.currentSaid);
+                    this.comics.push({
+                        newUrl: result.url,
+                        ...params,
+                        originalWidth: result.width,
+                        originalHeight: result.height,
+                    });
+                    /*                     this.$store.state.stories.push(this.currentStory);
+                    this.$store.state.faces.push(this.currentFace);
+                    this.$store.state.originalImageSizes.push({
+                        height: result.height,
+                        width: result.width,
+                    }); */
                 },
                 {
                     public_id: 'sample_remote',
                     effect: 'cartoonify:50:80',
                 }
             );
+        },
+        newImageWidth(comic) {
+            return 280 / (comic.originalHeight / comic.originalWidth);
         },
         createBorder(ind) {
             this.draw.rect(400, 300).attr({
@@ -851,21 +847,12 @@ export default {
                 })
                 .front();
         },
-        imageSpeechBubbleX() {
-            console.log('Bubble', 380 / this.originalImageSizes[this.currentImageIndex].width),
-                this.faces[this.currentImageIndex].b;
-
-            return (
-                this.xCoord(this.currentImageIndex) -
-                (380 / this.originalImageSizes[this.currentImageIndex].width) *
-                    this.faces[this.currentImageIndex].l
-            );
+        imageSpeechBubbleX(comic, ind) {
+            console.log('X index is', ind);
+            return (ind % 3) * 400 + 10 - (380 / comic.originalWidth) * comic.left;
         },
-        imageSpeechBubbleY(ind) {
-            return (
-                Math.floor(ind / 3) * 400 +
-                (280 / this.originalImageSizes[ind].width) * this.faces[ind].t
-            );
+        imageSpeechBubbleY(ind, comic) {
+            return Math.floor(ind / 3) * 400 + (280 / comic.originalWidth) * comic.top;
         },
         scrollToSmoothly(pos, time) {
             /*Time is only applicable for scrolling upwards*/
@@ -914,7 +901,7 @@ export default {
         document.body.addEventListener(
             'panstart',
             function(e) {
-                console.log('pan start', e);
+                // console.log('pan start', e);
             },
             true
         );
@@ -944,9 +931,10 @@ export default {
         //document.getElementById('lol').dispatchEvent(event);
 
         this.attachListener();
-        for(var x = 0;x<9;x++){
-            this.createBorder(x);
-            this.createTextbox(x);
+
+        for (let i = 0; i < 9; i++) {
+            this.createTextbox(i);
+            this.createBorder(i);
         }
     },
 };
