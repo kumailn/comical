@@ -1,13 +1,17 @@
 <template>
     <div>
+        <!-- <button @click="saveAsPNG">Download</button> -->
         <svg id="comic-container" class="main">
             <!-- this is the draggable root -->
             <g id='scene'>
                 <g id="dynamic"></g>
                 <svg v-for="(comic, ind) in comics" :key="ind" width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                    <transition name="slide-fade">
+                        <p v-if="show">hello</p>
+                    </transition>
                     <image :xlink:href="comic.newUrl" :x="xCoord(ind)" :y="(Math.floor(ind / 3) * 400) + 10" height="280px" width="380px" />
-                    <text :x="(ind % 3) * 400 + 10" :y="(Math.floor(ind / 3) * 400) + 330" class="small">{{ comic.storyInput.replace(/^(.{25}[^\s]*).*/, "$1") }}</text>
-                    <text :x="(ind % 3) * 400 + 10" :y="(Math.floor(ind / 3) * 400) + 355" class="small">{{ comic.storyInput.replace(comic.storyInput.replace(/^(.{25}[^\s]*).*/, "$1"), "") }}</text>
+                    <text :x="(ind % 3) * 400 + 10" :y="(Math.floor(ind / 3) * 400) + 330" class="small">{{ comic.storyInput.replace(/^\w/, c => c.toUpperCase()).replace(/^(.{25}[^\s]*).*/, "$1") }}</text>
+                    <text :x="(ind % 3) * 400 + 10" :y="(Math.floor(ind / 3) * 400) + 355" class="small">{{ comic.storyInput.replace(/^\w/, c => c.toUpperCase()).replace(comic.storyInput.replace(/^\w/, c => c.toUpperCase()).replace(/^(.{25}[^\s]*).*/, "$1"), "") }}</text>
                     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="958px" height="958px" viewBox="0 0 958 958" enable-background="new 0 0 958 958" xml:space="preserve">
                         <image v-if="comic.top != -1" id="image0" width="150" height="150" :x="imageSpeechBubbleX(comic, ind) + 100 + (newImageWidth(comic) - 380)/2" :y="imageSpeechBubbleY(ind, comic) - 50" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA74AAAO+CAQAAACJdwGKAAAABGdBTUEAALGPC/xhBQAAAAJiS0dE
 AP+Hj8y/AAAACXBIWXMAAABIAAAASABGyWs+AACAAElEQVR42u3ddZxb553+/Y/GnjEzs2M7tmOI
@@ -693,9 +697,9 @@ X23l1/91lt7QNqTIqOcrIhIF+8Ir5zIs/3+dwWlfZOUXuhIx9XxFRKLjvhEp/fWYo0+c2f91cg5WO/f0
 bxPrtiW3CLZ+JEWnnq+ISClwbkRyP5Ih/XHS43XsO4Pde7vq90ZK4SsiUlrcq2Flxma24Ex6tNeZviVDw84iIqXFvpXIa2NS5lfS3IpvOD/WkHPEFL4iIqUo5hKx1gjONu+bNPxMIqDwFREpVe69XL9+L7idCmw2WyxFpDlfEZFS5z6wbNJ5ctuOpOgtAer5ioiUPveSkjGXj5q4V7JS8JYMha+ISLnwq+qc
 naK3hCh8RUTKSy4RrOAtMQpfEZHyZBbCOsm3JCl8RUTKm/ff4wpdERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERp/8fmBLrzKPVw84AAAAldEVYdGRhdGU6Y3JlYXRlADIwMTgtMTAtMjBUMTk6NTE6NDQtMDc6MDDN5Q/hAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE4LTEwLTIwVDE5OjUxOjQ0LTA3OjAwvLi3XQAAAABJRU5ErkJggg==" />
                     </svg>
-                    <text v-if="comic.top != -1 && comic.said.length < 20" :x="imageSpeechBubbleX(comic, ind) + 100 + (newImageWidth(comic) - 380)/2" :y="imageSpeechBubbleY(ind, comic)" class="smaller">{{ comic.said }}</text>
-                    <text v-if="comic.top != -1 && comic.said.length > 20 && comic.said.length < 45" :x="imageSpeechBubbleX(comic, ind) + 100 + (newImageWidth(comic) - 380)/2" :y="imageSpeechBubbleY(ind, comic)" class="smaller">{{ comic.said.replace(/^(.{20}[^\s]*).*/, "$1") }}</text>
-                    <text v-if="comic.top != -1 && comic.said.length > 20 && comic.said.length < 45" :x="imageSpeechBubbleX(comic, ind) + 100 + (newImageWidth(comic) - 380)/2" :y="imageSpeechBubbleY(ind, comic) - 10" class="smaller">{{ comic.said.replace(comic.said.replace(/^(.{20}[^\s]*).*/, "$1"), "") }}</text>
+                    <text v-if="comic.top != -1 && comic.said.length < 15" :x="imageSpeechBubbleX(comic, ind) + 110 + (newImageWidth(comic) - 380)/2" :y="imageSpeechBubbleY(ind, comic)" class="smaller">{{ comic.said }}</text>
+                    <text v-if="comic.top != -1 && comic.said.length > 15 && comic.said.length < 45" :x="imageSpeechBubbleX(comic, ind) + 110 + (newImageWidth(comic) - 380)/2" :y="imageSpeechBubbleY(ind, comic)" class="smaller">{{ comic.said.replace(/^(.{15}[^\s]*).*/, "$1") }}</text>
+                    <text v-if="comic.top != -1 && comic.said.length > 20 && comic.said.length < 45" :x="imageSpeechBubbleX(comic, ind) + 110 + (newImageWidth(comic) - 380)/2" :y="imageSpeechBubbleY(ind, comic) + 20" class="smaller">{{ comic.said.replace(comic.said.replace(/^(.{15}[^\s]*).*/, "$1"), "") }}</text>
                 </svg>
             </g>
         </svg>
@@ -708,6 +712,7 @@ import SVG from 'svg.js';
 import panzoom from 'panzoom';
 import db from '../init.js';
 import cloudinary from 'cloudinary';
+import saveSvgAsPng from 'save-svg-as-png';
 import axios from 'axios';
 export default {
     name: 'HelloWorld',
@@ -817,6 +822,9 @@ export default {
         imageSpeechBubbleY(ind, comic) {
             return Math.floor(ind / 3) * 400 + (280 / comic.originalWidth) * comic.top;
         },
+        saveAsPNG() {
+            saveSvgAsPng.saveSvgAsPng(document.getElementById('comic-container'), 'comic.png');
+        },
         scrollToSmoothly(pos, time) {
             /*Time is only applicable for scrolling upwards*/
             /*Code written by hev1*/
@@ -856,7 +864,10 @@ export default {
             .set({ fakedata: 'test' })
             .then(() => console.log('Done'));
 
-        panzoom(document.getElementById('scene')).zoomAbs(
+        panzoom(document.getElementById('scene'), {
+            maxZoom: 1.2,
+            minZoom: 0.5,
+        }).zoomAbs(
             screen.width / 2 + 400, // initial x position
             screen.height / 2 - 500, // initial y position
             0.5 // initial zoom
@@ -912,7 +923,7 @@ export default {
 
 .smaller {
     font-family: 'Comic Sans MS';
-    font-size: 18px;
+    font-size: 16px;
 }
 h3 {
     margin: 40px 0 0;
@@ -941,5 +952,17 @@ a:focus {
     outline: 0;
     border: none;
     -moz-outline-style: none;
+}
+
+.slide-fade-enter-active {
+    transition: all 0.3s ease;
+}
+.slide-fade-leave-active {
+    transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.slide-fade-enter, .slide-fade-leave-to
+/* .slide-fade-leave-active below version 2.1.8 */ {
+    transform: translateX(10px);
+    opacity: 0;
 }
 </style>

@@ -12,6 +12,7 @@
     "cloudinary": "^1.11.0",
     "firebase": "^5.5.5",
     "panzoom": "^6.3.1",
+    "save-svg-as-png": "^1.4.6",
     "svg.js": "^2.6.6",
     "vue": "^2.5.17",
     "vue-router": "^3.0.1",
