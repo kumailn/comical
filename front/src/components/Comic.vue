@@ -1,5 +1,5 @@
 <template>
-    <div class="mainScene">
+    <div>
         <svg id="comic-container" class="main">
             <!-- this is the draggable root -->
             <g id='scene'>
@@ -941,6 +941,10 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.small {
+    font-family: 'Comic Sans MS';
+    font-size: 24px;
+}
 h3 {
     margin: 40px 0 0;
 }
@@ -959,7 +963,10 @@ li {
     height: 3000px;
     outline: none;
 }
-
+#bg {
+    width: 100%;
+    height: 100%;
+}
 a:active,
 a:focus {
     outline: 0;
