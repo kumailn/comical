@@ -33,8 +33,7 @@ const { dialogflow } = require('actions-on-google');
 const app = dialogflow();
 const request2 = require('request');
 
-var prompts = ['Tell me more.', 'Continue please.', 'Please continue.', 'Please tell me more.', 'Tell me some more.', 'Tell me more please.'];
-var fallbacks = ['Sorry, I didn\'t quite catch that.', 'Say that again?', 'I don\'t understand.', 'I didn\'t catch that.'];
+var prompts = ['Tell me more.', 'Please continue.', 'Go on.', 'Please tell me some more.', 'More please.'];
 
 app.intent('Default Welcome Intent', conv => {
     conv.data.session = {}
@@ -84,4 +83,4 @@ exports.main = functions.https.onRequest(app);
 exports.test = functions.https.onCall((data, context) => {
     console.log('inside function')
     return {test: true};
-  });
+});
