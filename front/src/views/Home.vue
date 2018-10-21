@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    <h2>Comical!</h2>
     <Comic msg="Welcome to Your Vue.js App" />
   </div>
 </template>

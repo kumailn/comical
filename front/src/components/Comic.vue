@@ -19,6 +19,9 @@
                 <svg v-for="(comic, ind) in comics" :key="ind" width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                     <image :xlink:href="comic" :x="xCoord(ind)" :y="(Math.floor(ind / 3) * 400) + 10" height="280px" width="380px" />
                 </svg>
+                <!-- <svg width="400" height="110">
+                    <rect width="300" height="100" style="fill:rgb(0,0,255); stroke-width:3; stroke:rgb(0,0,0)" />
+                </svg> -->
                 <text x="70" y="35" class="small">My</text>
             </g>
         </svg>
@@ -76,7 +79,7 @@ export default {
                 },
                 {
                     public_id: 'sample_remote',
-                    effect: 'cartoonify:50:bw',
+                    effect: 'cartoonify:50:80',
                 }
             );
         },
