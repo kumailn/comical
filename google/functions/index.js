@@ -33,15 +33,22 @@ const { dialogflow } = require('actions-on-google');
 const app = dialogflow();
 const request2 = require('request');
 
-var prompts = ['Tell me more.', 'Please continue.', 'Go on...', 'Please tell me some more.', 'Ooo! More please.', 'Wow, please go on.', 'Nice! Keep it up.', 'What happens next?', 'Then what happens?', 'I can\'t stand the suspense! What next?', 'What next?', 'Then what?', 'And then...', 'Wow! What happens after that?', 'And then what?'];
+var prompts = ['Tell me more.', 'Please continue.', 'Go on...', 'Please tell me some more.', 'Ooo! More please.', 'Wow, please go on.', 'Nice! Keep it up.', 'What happens next?', 'Then what happens?', 'I can\'t stand the suspense! What next?', 'What next?', 'Then what?', 'And then...', 'Epic! What happens after that?', 'And then what?'];
+var greatStory = ['Great story! ', 'Awesome story! ', 'Cool story! ', 'Epic story! ', 'Wild story! ', 'Groovy story! '];
+var endings = ['I look forward to creating with you again soon. ', 'I look forward to creating another comic with you soon. ', 'I look forward to creating another comic with you next time. ', 'Looking forward to creating together again soon. ', 'I hope to build another comic with you soon. '];
+var seeYa = ['Have a bright day!', 'Until then, keep smiling!', 'Have a great day!', 'See you later!', 'Bye for now!', 'Catch you later!'];
 
 app.intent('Default Welcome Intent', conv => {
     conv.data.session = {}
     let session = conv.data.session;
+    session.numLines = 0;
     conv.ask('Welcome to Comical! Please start telling your story.');
 });
 
 app.intent('storyInput', (conv, params) => {
+    let session = conv.data.session;
+    session.numLines++;
+
     let storyInput = params.storyInput;
     console.log('storyInput param: ' + storyInput);
 
@@ -65,16 +72,25 @@ app.intent('storyInput', (conv, params) => {
             comics: firebase.firestore.FieldValue.arrayUnion({url: response.data[1], storyInput, said,top:response.data[2],bottom:response.data[3],left:response.data[4],right:response.data[5]})
         }).then(() => {
             console.log('big success')
-            var output = prompts[Math.floor(Math.random() * prompts.length)];
-            conv.ask(output);
+
+            if(session.numLines == 12) {
+                let output = greatStory[Math.floor(Math.random() * greatStory.length)];
+                output += endings[Math.floor(Math.random() * endings.length)];
+                output += seeYa[Math.floor(Math.random() * seeYa.length)];
+                conv.close(output);
+            } else {
+                let output = prompts[Math.floor(Math.random() * prompts.length)];
+                conv.ask(output);
+            }
+
         }).catch(err => {
             console.log('big error', err)
-            conv.ask('ERROR', err);
+            conv.ask('Sorry, Comicaly has hit an error. Please try again later!', err);
         });
 
     }).catch((err) => {
         console.log('ERROR: ', err);
-        conv.ask("Error");
+        conv.ask("We're sorry, Comicaly has encountered an error. Please try again in a few minutes!");
     });
 });
 
