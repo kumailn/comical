@@ -1,7 +1,7 @@
 <template>
   <div class="home">
-    <h2>Comical!</h2>
-    <Comic msg="Welcome to Your Vue.js App" />
+    <img src="../assets/logo2.png" alt="">
+    <Comic msg="Welcome to Your Vue.js App" id="comic" />
   </div>
 </template>
 
@@ -16,3 +16,14 @@ export default {
     },
 };
 </script>
+
+<style scoped>
+img.resize {
+    width: 300px; /* you can use % */
+    height: auto;
+}
+
+#comic {
+    padding-top: 0;
+}
+</style>
