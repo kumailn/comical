@@ -73,7 +73,7 @@ app.intent('storyInput', (conv, params) => {
         }).then(() => {
             console.log('big success')
 
-            if(session.numLines == 12) {
+            if(session.numLines == 9) {
                 let output = greatStory[Math.floor(Math.random() * greatStory.length)];
                 output += endings[Math.floor(Math.random() * endings.length)];
                 output += seeYa[Math.floor(Math.random() * seeYa.length)];
