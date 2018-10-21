@@ -42,7 +42,7 @@ app.intent('Default Welcome Intent', conv => {
     conv.data.session = {}
     let session = conv.data.session;
     session.numLines = 0;
-    conv.ask('Welcome to Comical! Please start telling your story.');
+    conv.ask('Welcome to Comical! Let\'s hear your story.');
 });
 
 app.intent('storyInput', (conv, params) => {
