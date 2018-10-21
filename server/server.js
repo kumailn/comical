@@ -5,6 +5,9 @@ var bodyParser = require('body-parser');
 var http = require('http');
 var request = require("request");
 
+var validator = require('validate-image-url');
+
+
 // configure app to use bodyParser()
 // this will let us get the data from a POST
 app.use(bodyParser.urlencoded({
@@ -47,11 +50,11 @@ router.get('/', function (req, res) {
         if (error) throw new Error(error);
 
         var qStr = "";
-        if (body.documents[0] == undefined) {
+        console.log(body.documents[0].keyPhrases);
+        if (body.documents[0].keyPhrases.length == 0) {
             qStr = req.query.text;
         }
         else {
-            // res.json(body.documents[0].keyPhrases);
             qStr = body.documents[0].keyPhrases.join();
         }
         console.log(qStr);
@@ -77,119 +80,127 @@ router.get('/', function (req, res) {
 
         request(feelingOptions, function (error, response, body) {
             if (error) throw new Error(error);
+            console.log(body);
             feelingScore = body.documents[0].score;
-        });
 
-        var optionsImg = {
-            method: 'GET',
-            url: 'https://api.cognitive.microsoft.com/bing/v7.0/images/search?aspect=square&aspect=wide',
-            qs: {
-                q: qStr
-            },
-            headers: {
-                'postman-token': '37f2fd13-4353-8101-15c7-8db4ad48f35f',
-                'cache-control': 'no-cache',
-                'content-type': 'application/json',
-                'ocp-apim-subscription-key': '4f5a247648e449679e1ac58c04386def'
+            if (feelingScore < 0.4) {
+                qStr = qStr + " sad";
             }
-        };
-
-        request(optionsImg, function (error, response, body) {
-            if (error) throw new Error(error);
-            bodyJson = JSON.parse(body);
-
-            var keyList = [
-                '1e5136e00d7141cbb3bdf4623ada66bc',
-                '86e015e0a1d24013b451f717cd4feaff',
-                '8837e3ede9d742bfb3ebe0b3982c857d',
-                '76f3f738293a46f7b2c27a9f0529c4df'
-            ];
-
-            var imgList = [];
-            var temp_key = "";
-            for (var i = 0; i < 35; i++) {
-                if (bodyJson != 'undefined') {
-
-                    if (i % 4 == 0) {
-                        temp_key = keyList[0];
-                    } else if (i % 4 == 1) {
-                        temp_key = keyList[1];
-                    } else if (i % 4 == 2) {
-                        temp_key = keyList[2];
-                    } else {
-                        temp_key = keyList[3];
-                    }
-
-                    var faceEmo = {
-                        method: 'POST',
-                        url: 'https://eastus.api.cognitive.microsoft.com/face/v1.0/detect',
-                        qs: {
-                            returnFaceId: 'false',
-                            returnFaceLandmarks: 'false',
-                            returnFaceAttributes: 'emotion'
-                        },
-                        headers: {
-                            'content-type': 'application/json',
-                            'ocp-apim-subscription-key': temp_key
-                        },
-                        body: {
-                            url: bodyJson.value[i].contentUrl
-                        },
-                        json: true
-                    };
-
-                    request(faceEmo, function(error, response, body) {
-                        if (error) throw new Error(error);
-                        console.log(body);
-                    });
-
-                    imgList.push(bodyJson.value[i].contentUrl);
-                }
+            else if (feelingScore > 0.7){
+                qStr = qStr + " happy";
             }
-            var randomPic = imgList[Math.floor(Math.random() * imgList.length)];
 
-            var returnList = [qStr, randomPic];
-
-            var faceOptions = {
-                method: 'POST',
-                url: 'https://eastus.api.cognitive.microsoft.com/face/v1.0/detect',
+            var optionsImg = {
+                method: 'GET',
+                url: 'https://api.cognitive.microsoft.com/bing/v7.0/images/search',
                 qs: {
-                    returnFaceId: 'false',
-                    returnFaceLandmarks: 'false'
+                    aspect: 'wide',
+                    maxFileSize: '520192',
+                    q: qStr
                 },
                 headers: {
-                    'postman-token': 'dd6392b8-5411-6347-c8c3-927a10856dbb',
+                    'postman-token': '37f2fd13-4353-8101-15c7-8db4ad48f35f',
                     'cache-control': 'no-cache',
                     'content-type': 'application/json',
-                    'ocp-apim-subscription-key': '1e5136e00d7141cbb3bdf4623ada66bc'
-                },
-                body: {
-                    url: randomPic
-                },
-                json: true
+                    'ocp-apim-subscription-key': '4f5a247648e449679e1ac58c04386def'
+                }
             };
 
-            request(faceOptions, function (error, response, body) {
+            request(optionsImg, function (error, response, body) {
                 if (error) throw new Error(error);
-                console.log(body);
-                if (body.length != []) {
-                    returnList.push(body[0].faceRectangle.top);
-                    returnList.push(body[0].faceRectangle.top + body[0].faceRectangle.height);
-                    returnList.push(body[0].faceRectangle.left);
-                    returnList.push(body[0].faceRectangle.left + body[0].faceRectangle.width);
+                bodyJson = JSON.parse(body);
+
+                var imgList = [];
+                var temp_key = "";
+                for (var i = 0; i < 35; i++) {
+                    if (bodyJson != 'undefined') {
+                        //https://www.kaggle.com/cenkbircanoglu/comic-books-classification
+                        // var classOptions = {
+                        //     method: 'POST',
+                        //     url: 'https://southcentralus.api.cognitive.microsoft.com/customvision/v2.0/Prediction/4986dfb4-fcce-4b8e-8927-cae52c83c99b/url',
+                        //     qs: {
+                        //         iterationId: 'ed466a33-4e2d-4dc0-a4d1-8329b1b170bb'
+                        //     },
+                        //     headers: {
+                        //         'postman-token': '9877b983-17c4-0ad2-cc1d-462e57b782fb',
+                        //         'cache-control': 'no-cache',
+                        //         'content-type': 'application/json',
+                        //         'prediction-key': '94b9c943b68e45d48f2c1c71dd79819a'
+                        //     },
+                        //     body: {
+                        //         Url: bodyJson.value[i].contentUrl
+                        //     },
+                        //     json: true
+                        // };
+                        // request(classOptions, function (error, response, body) {
+                        //     if (error) throw new Error(error);
+                        //     console.log(body.predictions[0].tagName);
+                        //     if (body.predictions[0].tagName == 'comic') {
+                        imgList.push(bodyJson.value[i].contentUrl);
+                        //     }
+                        // });
+                    }
                 }
-                else {
-                    returnList.push(-1);
-                    returnList.push(-1);
-                    returnList.push(-1);
-                    returnList.push(-1);
-                }
-                console.log(returnList);
-                res.json(returnList);
+                // var randomPic = imgList[Math.floor(Math.random() * imgList.length)];
+                var randomPic = imgList[0];
+
+                var returnList = [qStr, randomPic];
+
+                var faceOptions = {
+                    method: 'POST',
+                    url: 'https://eastus.api.cognitive.microsoft.com/face/v1.0/detect',
+                    qs: {
+                        returnFaceId: 'false',
+                        returnFaceLandmarks: 'false'
+                    },
+                    headers: {
+                        'postman-token': 'dd6392b8-5411-6347-c8c3-927a10856dbb',
+                        'cache-control': 'no-cache',
+                        'content-type': 'application/json',
+                        'ocp-apim-subscription-key': '51d8556812ef4b1bbfaa2bf30df649c5'
+                    },
+                    body: {
+                        url: randomPic
+                    },
+                    json: true
+                };
+
+                request(randomPic, function (error, response, body) {
+                    if (error) {
+                        console.log("deadlink", randomPic);
+                        res.json("dead link");
+                    }
+                    else {
+                        request(faceOptions, function (error, response, body) {
+                            console.log('eeeeee', error);
+                            if (error) {
+                                res.json("dead link");
+                            } else {
+                                console.log('173', body);
+                                console.log('174', body.length);
+                                if (body.length != 0) {
+                                    returnList.push(body[0].faceRectangle.top);
+                                    returnList.push(body[0].faceRectangle.top + body[0].faceRectangle.height);
+                                    returnList.push(body[0].faceRectangle.left);
+                                    returnList.push(body[0].faceRectangle.left + body[0].faceRectangle.width);
+                                } else {
+                                    returnList.push(-1);
+                                    returnList.push(-1);
+                                    returnList.push(-1);
+                                    returnList.push(-1);
+                                }
+                                returnList.push(feelingScore);
+                                console.log('188', returnList);
+                                res.json(returnList);
+                            }
+                        });
+                    }
+                });
             });
         });
     });
 });
+
 
 app.use('/api', router);
 
