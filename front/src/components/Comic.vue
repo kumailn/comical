@@ -1,6 +1,5 @@
 <template>
     <div class="mainScene">
-
         <svg id="comic-container" class="main">
             <!-- this is the draggable root -->
 
@@ -17,7 +16,7 @@
                 </svg> -->
 
                 <svg v-for="(comic, ind) in comics" :key="ind" width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                    <image :xlink:href="comic" :x="xCoord(ind)" :y="(Math.floor(ind / 3) * 400) + 10" height="280px" width="380px" />
+                    <image :xlink:href="comic" :x="xCoord(ind)" :y="(Math.floor(ind / 3) * 400) + 10" height="280px" width="380px" style="z-index: -1; position: absloute;" />
                 </svg>
                 <text x="70" y="35" class="small">My</text>
             </g>
@@ -37,6 +36,7 @@ export default {
     name: 'HelloWorld',
     data() {
         return {
+            showBox: false,
             comics: [],
             draw: null,
             faceMap: 'http://40.117.32.177:8080/face?text=',
@@ -51,6 +51,7 @@ export default {
             this.currentImageIndex = ind;
             console.log('Index is', ind);
             this.createBorder(ind);
+            this.createTextbox(ind);
             return (ind % 3) * 400 + 10;
         },
         attachListener() {
@@ -72,7 +73,6 @@ export default {
                 result => {
                     console.log('Res', result);
                     this.comics.push(result.url);
-                    this.createTextbox(this.currentImageIndex);
                 },
                 {
                     public_id: 'sample_remote',
@@ -94,13 +94,14 @@ export default {
             });
         },
         createTextbox(ind) {
-            this.draw.rect(250, 50).attr({
+            this.rrr = this.draw.rect(250, 75).attr({
                 fill: '#ffffff',
                 stroke: '#000000',
+                width: 397,
                 'stroke-width': 6,
-                x: (ind % 3) * 400 + 150,
-                y: Math.floor(ind / 3) * 400 + 200,
-            });
+                x: (ind % 3) * 400,
+                y: Math.floor(ind / 3) * 400 + 300,
+            }).front();
         },
     },
     mounted() {
