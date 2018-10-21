@@ -1,14 +1,7 @@
 <template>
-  <div id="app" style="background-color:#778899">
-      <ul>
-        <li class="facebook"><a href="#"></a></li>
-    </ul>
-    <div id="nav">
-
-    
+    <div id="app">
+        <router-view />
     </div>
-    <router-view />
-  </div>
 </template>
 
 <style>
@@ -17,23 +10,22 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
-    color: #3B5998;
+    /* color: #3B5998; */
 }
 #nav {
     padding: 30px;
 }
-.facebook
-{
+.facebook {
     width: 300px;
     height: 80px;
-    background-color: #3B5998;
-    fill: #3B5998;
-    background-image: url("assets/logo2.png");
+    background-color: #3b5998;
+    fill: #3b5998;
+    background-image: url('assets/logo2.png');
     background-size: 300px 80px;
 }
 #nav a {
     font-weight: bold;
-    color: #3B5998;
+    color: #3b5998;
 }
 ul {
     width: 100%;
@@ -41,7 +33,7 @@ ul {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background-color: #3B5998;
+    background-color: #3b5998;
 }
 
 li {

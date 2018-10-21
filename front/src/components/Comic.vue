@@ -6,8 +6,8 @@
                 <g id="dynamic"></g>
                 <svg v-for="(comic, ind) in comics" :key="ind" width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                     <image :xlink:href="comic.newUrl" :x="xCoord(ind)" :y="(Math.floor(ind / 3) * 400) + 10" height="280px" width="380px" />
-                    <text :x="(ind % 3) * 400 + 10" :y="(Math.floor(ind / 3) * 400) + 330" class="small">{{ comic.storyInput.replace(/^(.{50}[^\s]*).*/, "$1") }}</text>
-                    <text :x="(ind % 3) * 400 + 10" :y="(Math.floor(ind / 3) * 400) + 355" class="small">{{ comic.storyInput.replace(comic.storyInput.replace(/^(.{50}[^\s]*).*/, "$1"), "") }}</text>
+                    <text :x="(ind % 3) * 400 + 10" :y="(Math.floor(ind / 3) * 400) + 330" class="small">{{ comic.storyInput.replace(/^(.{25}[^\s]*).*/, "$1") }}</text>
+                    <text :x="(ind % 3) * 400 + 10" :y="(Math.floor(ind / 3) * 400) + 355" class="small">{{ comic.storyInput.replace(comic.storyInput.replace(/^(.{25}[^\s]*).*/, "$1"), "") }}</text>
                     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="958px" height="958px" viewBox="0 0 958 958" enable-background="new 0 0 958 958" xml:space="preserve">
                         <image v-if="comic.top != -1" id="image0" width="150" height="150" :x="imageSpeechBubbleX(comic, ind) + 100 + (newImageWidth(comic) - 380)/2" :y="imageSpeechBubbleY(ind, comic) - 50" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA74AAAO+CAQAAACJdwGKAAAABGdBTUEAALGPC/xhBQAAAAJiS0dE
 AP+Hj8y/AAAACXBIWXMAAABIAAAASABGyWs+AACAAElEQVR42u3ddZxb553+/Y/GnjEzs2M7tmOI
@@ -693,7 +693,9 @@ X23l1/91lt7QNqTIqOcrIhIF+8Ir5zIs/3+dwWlfZOUXuhIx9XxFRKLjvhEp/fWYo0+c2f91cg5WO/f0
 bxPrtiW3CLZ+JEWnnq+ISClwbkRyP5Ih/XHS43XsO4Pde7vq90ZK4SsiUlrcq2Flxma24Ex6tNeZviVDw84iIqXFvpXIa2NS5lfS3IpvOD/WkHPEFL4iIqUo5hKx1gjONu+bNPxMIqDwFREpVe69XL9+L7idCmw2WyxFpDlfEZFS5z6wbNJ5ctuOpOgtAer5ioiUPveSkjGXj5q4V7JS8JYMha+ISLnwq+qc
 naK3hCh8RUTKSy4RrOAtMQpfEZHyZBbCOsm3JCl8RUTKm/ff4wpdERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERERp/8fmBLrzKPVw84AAAAldEVYdGRhdGU6Y3JlYXRlADIwMTgtMTAtMjBUMTk6NTE6NDQtMDc6MDDN5Q/hAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE4LTEwLTIwVDE5OjUxOjQ0LTA3OjAwvLi3XQAAAABJRU5ErkJggg==" />
                     </svg>
-                    <text v-if="comic.top != -1" :x="imageSpeechBubbleX(comic, ind) + 100 + (newImageWidth(comic) - 380)/2" :y="imageSpeechBubbleY(ind, comic)" class="small">{{ comic.said }}</text>
+                    <text v-if="comic.top != -1 && comic.said.length < 20" :x="imageSpeechBubbleX(comic, ind) + 100 + (newImageWidth(comic) - 380)/2" :y="imageSpeechBubbleY(ind, comic)" class="smaller">{{ comic.said }}</text>
+                    <text v-if="comic.top != -1 && comic.said.length > 20 && comic.said.length < 45" :x="imageSpeechBubbleX(comic, ind) + 100 + (newImageWidth(comic) - 380)/2" :y="imageSpeechBubbleY(ind, comic)" class="smaller">{{ comic.said.replace(/^(.{20}[^\s]*).*/, "$1") }}</text>
+                    <text v-if="comic.top != -1 && comic.said.length > 20 && comic.said.length < 45" :x="imageSpeechBubbleX(comic, ind) + 100 + (newImageWidth(comic) - 380)/2" :y="imageSpeechBubbleY(ind, comic) - 10" class="smaller">{{ comic.said.replace(comic.said.replace(/^(.{20}[^\s]*).*/, "$1"), "") }}</text>
                 </svg>
             </g>
         </svg>
@@ -796,7 +798,7 @@ export default {
             });
         },
         createTextbox(ind) {
-            this.rrr = this.draw
+            this.draw
                 .rect(250, 75)
                 .attr({
                     fill: '#ffffff',
@@ -876,7 +878,7 @@ export default {
         );
 
         this.draw = SVG('dynamic').size(3000, 3000);
-        this.draw.rect(1200, 1600).attr({ fill: '#F5F5F5' });
+        this.draw.rect(1200, 1150).attr({ fill: '#A9A9A9' });
 
         var event = new MouseEvent('dblclick', {
             view: window,
@@ -906,6 +908,11 @@ export default {
 .small {
     font-family: 'Comic Sans MS';
     font-size: 24px;
+}
+
+.smaller {
+    font-family: 'Comic Sans MS';
+    font-size: 18px;
 }
 h3 {
     margin: 40px 0 0;
