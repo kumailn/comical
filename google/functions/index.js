@@ -59,11 +59,11 @@ app.intent('storyInput', (conv, params) => {
         url: 'http://40.117.32.177:8080/api?text='+storyInput
     };
 
-    return axios.get('http://40.117.32.177:8080/api?text=${storyInput}').then((response) => {
+    return axios.get(`http://40.117.32.177:8080/api?text=${storyInput}`).then((response) => {
         console.log("Got data:", response.data);
 
         return db.collection("users").doc("test2").update({
-            comics: firebase.firestore.FieldValue.arrayUnion({url: response.data[1], storyInput, said})
+            comics: firebase.firestore.FieldValue.arrayUnion({url: response.data[1], storyInput, said,top:response.data[2],bottom:response.data[3],left:response.data[4],right:response.data[5]})
         }).then(() => {
             console.log('big success')
             var output = prompts[Math.floor(Math.random() * prompts.length)];
