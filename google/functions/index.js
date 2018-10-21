@@ -33,12 +33,12 @@ const { dialogflow } = require('actions-on-google');
 const app = dialogflow();
 const request2 = require('request');
 
-var prompts = ['Tell me more.', 'Please continue.', 'Go on.', 'Please tell me some more.', 'More please.'];
+var prompts = ['Tell me more.', 'Please continue.', 'Go on...', 'Please tell me some more.', 'Ooo! More please.', 'Wow, please go on.', 'Nice! Keep it up.', 'What happens next?', 'Then what happens?', 'I can\'t stand the suspense! What next?', 'What next?', 'Then what?', 'And then...', 'Wow! What happens after that?', 'And then what?'];
 
 app.intent('Default Welcome Intent', conv => {
     conv.data.session = {}
     let session = conv.data.session;
-    conv.ask('Welcome to Comical! Please begin telling your story.');
+    conv.ask('Welcome to Comical! Please start telling your story.');
 });
 
 app.intent('storyInput', (conv, params) => {
