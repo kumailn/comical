@@ -16,7 +16,7 @@
                     <text :x="xCoord(ind)" :y="(Math.floor(ind / 3) * 400) + 330" class="small">{{ stories[ind].replace(/^(.{50}[^\s]*).*/, "$1") }}</text>
                     <text :x="xCoord(ind)" :y="(Math.floor(ind / 3) * 400) + 355" class="small">{{ stories[ind].replace(stories[ind].replace(/^(.{50}[^\s]*).*/, "$1"), "") }}</text>
                     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="958px" height="958px" viewBox="0 0 958 958" enable-background="new 0 0 958 958" xml:space="preserve">
-                        <image v-if="faces[ind]" id="image0" width="150" height="150" :x="imageSpeechBubbleX() + 100" :y="imageSpeechBubbleY(ind) - 100" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA74AAAO+CAQAAACJdwGKAAAABGdBTUEAALGPC/xhBQAAAAJiS0dE
+                        <image v-if="faces[ind]" id="image0" width="150" height="150" :x="imageSpeechBubbleX() + (((380 / originalImageSizes[currentImageIndex].width) * originalImageSizes[currentImageIndex].width) / 2)" :y="imageSpeechBubbleY(ind) - 100" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA74AAAO+CAQAAACJdwGKAAAABGdBTUEAALGPC/xhBQAAAAJiS0dE
 AP+Hj8y/AAAACXBIWXMAAABIAAAASABGyWs+AACAAElEQVR42u3ddZxb553+/Y/GnjEzs2M7tmOI
 w8zYpA20TZomhS3Tb0vbbvfZdrvdwrbbNoU0SZuUm0IaZo6ZYrZjiJmZ2R7PSHr+GM1IB3Uf6UhH
 cL3zij0zvo/m6NjxlZu+N4iIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiIiI
@@ -849,6 +849,7 @@ export default {
         imageSpeechBubbleX() {
             console.log('Bubble', 380 / this.originalImageSizes[this.currentImageIndex].width),
                 this.faces[this.currentImageIndex].b;
+
             return (
                 this.xCoord(this.currentImageIndex) -
                 (380 / this.originalImageSizes[this.currentImageIndex].width) *
