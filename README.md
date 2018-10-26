@@ -22,7 +22,7 @@ Session data storage in Firestore
 Dialogflow used to create the conversation model
 Actions-on-Google v2 Library for conversational fulfilment
 Challenges we ran into
-The biggest issue our team encountered was in the criteria and classification of the images being selected for our comics by the Bing Image Search API. For example, if the user enters "My sister was crying", the key phrase extraction would occasionally feel that the most relevant information was the word "sister"and would generate an image of a smiling woman. This was the reason our team implemented sentiment analysis, in order to understand the context of the input. Our team also lacked experience in many of the Azure/Google Cloud platform features we needed to implement.
+The biggest issue our team encountered was in the criteria and classification of the image being selected for our comics by the Bing Image Search API. For example, if the user enters "My sister was crying", the key phrase extraction would occasionally feel that the most relevant information was the word "sister"and would generate an image of a smiling woman. This was the reason our team implemented sentiment analysis, in order to understand the context of the input. Our team also lacked experience in many of the Azure/Google Cloud platform features we needed to implement.
 
 **Accomplishments that we're proud of**
 We're proud of having ideated, designed, developed and tested an ambitious idea in just 36 hours! Our team formed after the start of the Hackathon, and our members came from a variety of countries and backgrounds. We feel our biggest accomplishments are..:
