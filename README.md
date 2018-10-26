@@ -29,7 +29,7 @@ We're proud of having ideated, designed, developed and tested an ambitious idea 
 
 Learning multiple new tools within a short period of time
 Creating a project that communicates between multiple endpoints, API's and databases
-Sleeping ~3 hours/person over a 3 day period
+Sleeping ~3 hours per person over a 3 day period
 What we learned
 We would struggle to fit everything we learned over the past 3 days onto one page, but we feel the biggest lessons were that...:
 
